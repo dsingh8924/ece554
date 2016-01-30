@@ -20,7 +20,7 @@ rxd = 0;
 #10 rst=1;
 end
 
-always #5120 rxd = ~rxd;
+always #104000 rxd = ~rxd;//time between 2 enables is about 6.5us, this has to be 16x of that
 
 always #5 clk=~clk;
 

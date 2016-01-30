@@ -39,22 +39,22 @@ state st, nxt_st;
 assign ioaddr = load_db_high ? 2'b11 :
                 load_db_low ? 2'b10 :
                 drive_tx_rx ? 2'b00 : 2'bz;
-/*
-always @(posedge clk, negedge rst_n) begin
-    if(!rst_n) begin
-        ioaddr <= 2'bz;
-    end else begin
-        if(load_db_high)
-            ioaddr <= 2'b11;
-        else if(load_db_low)
-            ioaddr <= 2'b10;
-        else if(drive_tx_rx)
-            ioaddr <= 2'b00; //not using status reg yet
-        else
-            ioaddr <= 2'bz;
-    end
-end
-*/
+
+//baud rate and corresponding divisors are - 
+//4800 bits/s - 0x0515
+//9600 bits/s - 0x028A - Verified, gives frequency of 153.6kHz
+//19200 bits/s - 0x0145
+//38400 bits/s - 0x00A2
+
+assign databus = (load_db_high == 1'b1 && br_cfg == 2'b00) ? 8'h05 :
+                 (load_db_high == 1'b1 && br_cfg == 2'b01) ? 8'h02 :
+                 (load_db_high == 1'b1 && br_cfg == 2'b10) ? 8'h01 :
+                 (load_db_high == 1'b1 && br_cfg == 2'b11) ? 8'h00 :
+                 (load_db_low == 1'b1 && br_cfg == 2'b00) ? 8'h15 :
+                 (load_db_low == 1'b1 && br_cfg == 2'b01) ? 8'h8A :
+                 (load_db_low == 1'b1 && br_cfg == 2'b10) ? 8'h45 :
+                 (load_db_low == 1'b1 && br_cfg == 2'b11) ? 8'hA2 :
+                 (send_data) ? data_buf : 8'hz;
 
 always @(posedge clk, negedge rst_n) begin
     if(!rst_n) begin
@@ -64,23 +64,6 @@ always @(posedge clk, negedge rst_n) begin
             data_buf <= databus;
     end
 end
-
-//baud rate and corresponding divisors are - 
-//4800 bits/s - 0x0144
-//9600 bits/s - 0x0288
-//19200 bits/s - 0x0510
-//38400 bits/s - 0x0A20
-
-assign databus = (load_db_high == 1'b1 && br_cfg == 2'b00) ? 8'h01 :
-                 (load_db_high == 1'b1 && br_cfg == 2'b01) ? 8'h02 :
-                 (load_db_high == 1'b1 && br_cfg == 2'b10) ? 8'h05 :
-                 (load_db_high == 1'b1 && br_cfg == 2'b11) ? 8'h0A :
-                 (load_db_low == 1'b1 && br_cfg == 2'b00) ? 8'h44 :
-                 (load_db_low == 1'b1 && br_cfg == 2'b01) ? 8'h88 :
-                 (load_db_low == 1'b1 && br_cfg == 2'b10) ? 8'h10 :
-                 (load_db_low == 1'b1 && br_cfg == 2'b11) ? 8'h20 :
-                 (send_data) ? data_buf : 8'hz;
-
 
 always @(posedge clk, negedge rst_n) begin
     if (!rst_n) begin

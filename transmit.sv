@@ -112,6 +112,7 @@ xmit = 1'b0;
             //xmit_en goes high according to the baud rate
             //once it goes high we load the contents of tx_buf to the shift register,
             //clear the bit counter & TBR register and start shifting
+            //TBR will be set only for 1 cycle, processor should poll
             if (xmit_en == 1'b1 && ioaddr == 2'b00 && iorw == 1'b0) begin
                 start_bit = 1'b1;
                 load_reg = 1'b1;
@@ -119,6 +120,7 @@ xmit = 1'b0;
                 clr_tbr = 1'b1;
                 nxt_st = TRANSMIT;
             end else begin
+                clr_tbr = 1'b1;
                 stop_bit = 1'b1;
                 nxt_st = IDLE;
             end

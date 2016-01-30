@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 module spart(
     input clk,
-    input rst,
+    input rst_n,
     input iocs,
     input iorw,
     output rda,
@@ -54,7 +54,7 @@ BAUD baud_rate_gen(.clk(clk),
                 );
 transmit transmitter(.clk(clk),
                 .rst_n(rst_n),
-                .brg_tx_en(brg_tx_en),
+                .brg_tx_en(brg_en),
                 .iocs(iocs),
                 .iorw(iorw),
                 .ioaddr(ioaddr),
@@ -64,7 +64,7 @@ transmit transmitter(.clk(clk),
                 );
 receive receiver (.clk(clk),
                 .rst_n(rst_n),
-                .brg_rx_en(brg_rx_en),
+                .brg_rx_en(brg_en),
                 .iocs(iocs),
                 .iorw(iorw),
                 .ioaddr(ioaddr),

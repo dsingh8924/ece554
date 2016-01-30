@@ -35,7 +35,7 @@ module top_level(
 	
 	// Instantiate your SPART here
 	spart spart0( .clk(clk),
-                 .rst(rst),
+                 .rst_n(rst),
 					  .iocs(iocs),
 					  .iorw(iorw),
 					  .rda(rda),
