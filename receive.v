@@ -17,8 +17,10 @@ reg [7:0] rx_shift_reg;
 reg [3:0] rx_cnt;
 reg [4:0] bit_cnt;
 
-typedef enum reg {IDLE, RECEIVE} state;
-state st, nxt_st;
+localparam IDLE=1'b0, RECEIVE=1'b1;
+reg st, nxt_st;
+//typedef enum reg {IDLE, RECEIVE} state;
+//state st, nxt_st;
 
 //delaying RxD by one cycle
 always @(posedge clk, negedge rst_n) begin
@@ -65,7 +67,7 @@ end
 
 //once 8-bits of data is received, it'll be copied into a buffer
 //controlled by the state machine
-always @(posedge clk, negedge rst_n) begin
+always @(posedge clk) begin
     if(load_buf)
         rx_buf <= rx_shift_reg;
 end
@@ -119,7 +121,7 @@ always @(posedge clk, negedge rst_n) begin
 end
 
 //State machine logic
-always_comb begin
+always @(*) begin
 rst_cnt = 1'b0;
 inc_cnt = 1'b0;
 clr_rda = 1'b0;

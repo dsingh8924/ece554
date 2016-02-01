@@ -15,8 +15,10 @@ reg [7:0] tx_shift_reg;
 reg [3:0] tx_cnt;
 reg [4:0] bit_cnt;
 
-typedef enum reg {IDLE, TRANSMIT} state;
-state st, nxt_st;
+localparam IDLE=1'b0, TRANSMIT=1'b1;
+reg st, nxt_st;
+//typedef enum reg {IDLE, TRANSMIT} state;
+//state st, nxt_st;
 
 //logic for keeping track of incoming enables from BRG and 
 //generating transmit enables every 16 BRG enables
@@ -97,7 +99,7 @@ always @(posedge clk, negedge rst_n) begin
 end
 
 //State machine logic
-always_comb begin
+always @(*) begin
 rst_cnt = 1'b0;
 inc_cnt = 1'b0;
 clr_tbr = 1'b0;
