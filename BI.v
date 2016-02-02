@@ -1,3 +1,4 @@
+`timescale 1ns / 1ps
 module BI(databus, ioaddr, tx_buf, rx_buf, tbr, rda, iocs, iorw, db_low, db_high, status_reg);
 
 input tbr, rda, iocs, iorw;
