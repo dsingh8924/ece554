@@ -7,7 +7,7 @@ output reg [7:0] rx_buf;
 input rxd;
 output reg rda;
 
-reg rxd_f, rxd_d;
+reg rxd_f, rxd_stable, rxd_stable_d;
 reg rst_cnt, inc_cnt;
 reg rcv, rcv_en;
 reg load_buf, clr_shift_reg;
@@ -34,9 +34,18 @@ end
 //delaying RxD by one cycle
 always @(posedge clk, negedge rst_n) begin
     if (!rst_n) begin
-        rxd_d <= 1'b0;
+        rxd_stable <= 1'b0;
     end else begin
-        rxd_d <= rxd_f;
+        rxd_stable <= rxd_f;
+    end
+end
+
+//delaying RxD by one cycle
+always @(posedge clk, negedge rst_n) begin
+    if (!rst_n) begin
+        rxd_stable_d <= 1'b0;
+    end else begin
+        rxd_stable_d <= rxd_stable;
     end
 end
 
@@ -48,7 +57,7 @@ always @(posedge clk, negedge rst_n) begin
     end else begin
         if (clr_rcv_start)
             rcv_start <= 1'b0;
-        else if ((rxd_f == 1'b0) && (rxd_d == 1'b1))
+        else if ((rxd_stable == 1'b0) && (rxd_stable_d == 1'b1))
             rcv_start <= 1'b1;
         //else maintain
     end
@@ -91,7 +100,7 @@ always @(posedge clk, negedge rst_n) begin
         if (rcv)
             //data comes in LSB first
             //enter data at MSB, so it makes its way to LSB
-            rx_shift_reg <= {rxd, rx_shift_reg[7:1]}; 
+            rx_shift_reg <= {rxd_stable_d, rx_shift_reg[7:1]}; 
     end
 end
 
