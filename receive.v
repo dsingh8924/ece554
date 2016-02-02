@@ -7,7 +7,7 @@ output reg [7:0] rx_buf;
 input rxd;
 output reg rda;
 
-reg rxd_d;
+reg rxd_f, rxd_d;
 reg rst_cnt, inc_cnt;
 reg rcv, rcv_en;
 reg load_buf, clr_shift_reg;
@@ -22,12 +22,21 @@ reg st, nxt_st;
 //typedef enum reg {IDLE, RECEIVE} state;
 //state st, nxt_st;
 
+//metastability flop
+always @(posedge clk, negedge rst_n) begin
+    if (!rst_n) begin
+        rxd_f <= 1'b0;
+    end else begin
+        rxd_f <= rxd;
+    end
+end
+
 //delaying RxD by one cycle
 always @(posedge clk, negedge rst_n) begin
     if (!rst_n) begin
         rxd_d <= 1'b0;
     end else begin
-        rxd_d <= rxd;
+        rxd_d <= rxd_f;
     end
 end
 
@@ -39,7 +48,7 @@ always @(posedge clk, negedge rst_n) begin
     end else begin
         if (clr_rcv_start)
             rcv_start <= 1'b0;
-        else if ((rxd == 1'b0) && (rxd_d == 1'b1))
+        else if ((rxd_f == 1'b0) && (rxd_d == 1'b1))
             rcv_start <= 1'b1;
         //else maintain
     end
