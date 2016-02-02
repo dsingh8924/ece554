@@ -131,12 +131,12 @@ xmit = 1'b0;
             //first we transmit one start bit (0) and then 8 bits of data
             //then set TBR and transition to IDLE state
             if (xmit_en == 1'b1 && ioaddr == 2'b00 && iorw == 1'b0) begin
-                xmit = 1'b1;
                 if (bit_cnt == 9) begin //1 start bit and 8 data bits
                     set_tbr = 1'b1;
                     rst_cnt = 1'b1;
                     nxt_st = IDLE;
                 end else begin
+                    xmit = 1'b1;
                     inc_cnt = 1'b1;
                     nxt_st = TRANSMIT;
                 end
